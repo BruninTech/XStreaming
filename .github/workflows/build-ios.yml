@@ -1,0 +1,41 @@
+  name: Build unsigned IPA
+on: workflow_dispatch
+
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: yarn install
+
+      - name: Install pods
+        working-directory: ios
+        run: pod install
+
+      - name: Build (no signing)
+        working-directory: ios
+        run: |
+          xcodebuild archive \
+            -workspace XStreaming.xcworkspace \
+            -scheme XStreaming \
+            -configuration Release \
+            -sdk iphoneos \
+            -archivePath $PWD/build/app.xcarchive \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
+
+      - name: Package IPA
+        working-directory: ios/build
+        run: |
+          mkdir Payload
+          cp -r app.xcarchive/Products/Applications/*.app Payload/
+          zip -r XStreaming.ipa Payload
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: XStreaming-ipa
+          path: ios/build/XStreaming.ipa
