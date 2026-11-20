@@ -11,7 +11,9 @@ jobs:
         with:
           node-version: 20
 
-      - run: yarn install
+      - run: corepack enable
+
+      - run: yarn install --no-immutable
 
       - name: Install pods
         working-directory: ios
