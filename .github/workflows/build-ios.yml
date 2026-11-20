@@ -11,6 +11,12 @@ jobs:
         with:
           node-version: 20
 
+      - name: Use Xcode 16.4
+        run: |
+          ls /Applications | grep Xcode
+          sudo xcode-select -s /Applications/Xcode_16.4.app
+          xcodebuild -version
+
       - run: corepack enable
 
       - run: yarn install --no-immutable
@@ -31,13 +37,3 @@ jobs:
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
 
       - name: Package IPA
-        working-directory: ios/build
-        run: |
-          mkdir Payload
-          cp -r app.xcarchive/Products/Applications/*.app Payload/
-          zip -r XStreaming.ipa Payload
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: XStreaming-ipa
-          path: ios/build/XStreaming.ipa
