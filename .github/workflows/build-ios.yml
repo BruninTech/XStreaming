@@ -25,8 +25,8 @@ jobs:
           echo "No older Xcode found on this runner"
           exit 1
 
-      - name: Download iOS platform
-        run: sudo xcodebuild -downloadPlatform iOS
+      - name: Remove launch storyboard (needs missing iOS platform)
+        run: rm -f ios/XStreaming/Base.lproj/LaunchScreen.storyboard
 
       - run: corepack enable
 
@@ -52,6 +52,7 @@ jobs:
             -sdk iphoneos \
             -archivePath $PWD/build/app.xcarchive \
             IPHONEOS_DEPLOYMENT_TARGET=15.0 \
+            INFOPLIST_KEY_UILaunchStoryboardName= \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" 2>&1 | tee build.log
 
       - name: Show errors
