@@ -20,6 +20,11 @@ jobs:
 
       - run: yarn install --no-immutable
 
+      - name: Bundle JS
+        run: |
+          mkdir -p ios/bundle
+          npx react-native bundle --platform ios --dev false --entry-file index.js --bundle-output ios/bundle/main.jsbundle --assets-dest ios/bundle
+
       - name: Install pods
         working-directory: ios
         run: pod install
@@ -39,7 +44,7 @@ jobs:
       - name: Show errors
         if: failure()
         working-directory: ios
-        run: grep -n "error:" build.log | head -30
+        run: grep -n "error:" build.log | grep -v system_error | head -30
 
       - name: Package IPA
         working-directory: ios/build
