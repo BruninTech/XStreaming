@@ -25,6 +25,9 @@ jobs:
           echo "No older Xcode found on this runner"
           exit 1
 
+      - name: Download iOS platform
+        run: sudo xcodebuild -downloadPlatform iOS
+
       - run: corepack enable
 
       - run: yarn install --no-immutable
